@@ -1,0 +1,70 @@
+The command which can be used:
+pip install python-telegram-bot~=13.14
+
+///Check//
+-> Neon host: Project_name:- Test_bot database_name :- botDB
+-> postgresql://botDB_owner:pXteO0sC1nBW@ep-curly-leaf-a5efkamh.us-east-2.aws.neon.tech/botDB?sslmode=require
+-> postgres password:- 1724Post superuser:- postgres
+-> pip install python-telegram-bot --upgrade
+-> database: telegram_bot_01 User: telegram_bot_user
+  __SITES__
+-> Documentation for the postgres adapter https://www.psycopg.org/docs/index.html
+-> documentation for telegram-python https://docs.python-telegram-bot.org/en/stable/telegram.html
+-> 
+
+///Commands//
+psql -U postgres
+	create database telegram_bot_01;
+	create user telegram_bot_user with encrypted password 'password';
+	grant all privileges on database telegram_bot_01 to telegram_bot_user;
+\c telegram_bot_01
+GRANT CREATE ON SCHEMA public TO telegram_bot_user;
+GRANT USAGE ON SCHEMA public TO telegram_bot_user;
+\dt+ --Access privilages
+\dt ---list of relations
+select * from reminders;
+
+
+///////////Future reviewing courses ////////
+ -> ChatBots: Messenger ChatBot - DialogFlow and nodejs :---Use DialogFlow to train chatbot to have dialogs. Develop backend app to connect chatbot to web services and databases
+
+-> Complete course TelegramBot and PHP, Build your ChatBot:--- Step by Step learning PHP and TelegramBot complete course API Method ,telegram bot and php,learn how to build robot 2021
+
+-> Chatbot - The Development Guide 2024 (Beginner + Advanced):--- Create a Chatbot by leveraging and integrating the power of OpenAI, GPT, ChatGPT, DALL-E and FastAPI
+
+->Creating a telegram bot using Java:-- Telegram bot, Java, Spring, Hibernate, PostgreSQL, AWS.
+
+->FULL STACK JAVA DEV: JAVA + JSP + SPRING + BOOT + JS + REACT:-- Full Stack Java, JSP, Hibernate, Spring, Web-services/RestFul API, Spring boot Backend, JavaScript, React frontend.
+
+->DYDX Pairs Trading Bot Build in Python Running in the Cloud:-- Develop an advanced decentralised trading bot which runs on AWS and sends private messages to your Telegram account
+
+->Telegram Bot in Java(and deployment / pizza bot):-- Detailed Practical Course on Creating and Programming Telegram Bots in Java With Examples in Code
+
+->Telegram Bot Without Programming - Complete Guide:-- Complete guide for the Beginners to create the Telegram bot less than 1 hour
+
+->
+
+
+# from telegram import Update, KeyboardButton, ReplyKeyboardMarkup
+# from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
+#
+# # Replace with your actual bot token
+# TOKEN = "7212398139:AAGXpLZPo6u5b1pR3OyxfFA-lCxiiRrA2dk"
+#
+# async def start_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+#     reply_markup = await add_reminder_button()  # Call the function to get the keyboard
+#     await update.message.reply_text("Hello, creator!", reply_markup=reply_markup)
+#
+# async def add_reminder_button():
+#     keyboard = [[KeyboardButton("Add a reminder ⏰")]]
+#     return ReplyKeyboardMarkup(keyboard, one_time_keyboard=True)
+#
+# if __name__ == "__main__":
+#     # Initialize the application
+#     application = ApplicationBuilder().token(TOKEN).build()  # Use the hardcoded token
+#
+#     # Register the command handler
+#     application.add_handler(CommandHandler("start", start_handler))
+#
+#     # Start polling
+#     application.run_polling()

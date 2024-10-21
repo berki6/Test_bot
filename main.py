@@ -6,9 +6,10 @@ import os, threading, time, datetime
 
 ENTER_MESSAGE, ENTER_TIME = range(2)
 dataSource = DataSource(os.environ.get("DATABASE_URL"))
-TOKEN = "7212398139:AAGXpLZPo6u5b1pR3OyxfFA-lCxiiRrA2dk"
+TOKEN = os.getenv('TOKEN')
+
 URL = "postgres://telegram_bot_user:password@localhost:5432/telegram_bot_01"
-DATABASE_URL = "postgresql://botDB_owner:pXteO0sC1nBW@ep-curly-leaf-a5efkamh.us-east-2.aws.neon.tech/botDB?sslmode=require"
+
 
 ADD_REMINDER_TEXT = 'Add a reminder⏰'
 INTERVAL = 30

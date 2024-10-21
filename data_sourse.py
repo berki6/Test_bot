@@ -92,12 +92,11 @@ class DataSource:
         finally:
             self.close_connection(conn)
 
-    def fire_reminder(self, reminder_id,chat_id, message, time):
+    def fire_reminder(self, reminder_id):
         conn = None
         try:
             conn = self.get_connection()
             cur = conn.cursor()
-            logger.info(f"Inserting reminder with chat_id={chat_id}, message='{message}', time='{time}'")
             cur.execute(FIRE_REMINDER_STATEMENTS, (reminder_id,))
             cur.close()
             conn.commit()

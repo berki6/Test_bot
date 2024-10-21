@@ -2,17 +2,34 @@ from telegram.ext import (Updater, Filters, CallbackContext,CommandHandler, Mess
 from telegram import KeyboardButton, ReplyKeyboardMarkup  , Update
 
 from data_sourse import DataSource
-import os, threading, time, datetime
-
-ENTER_MESSAGE, ENTER_TIME = range(2)
-dataSource = DataSource(os.environ.get("DATABASE_URL"))
-TOKEN = os.getenv('TOKEN')
-
-URL = "postgres://telegram_bot_user:password@localhost:5432/telegram_bot_01"
-
+import os, threading, time, datetime, logging, sys
 
 ADD_REMINDER_TEXT = 'Add a reminder⏰'
 INTERVAL = 30
+
+
+MODE = os.getenv("MODE")
+TOKEN = os.getenv('TOKEN')
+ENTER_MESSAGE, ENTER_TIME = range(2)
+dataSource = DataSource(os.environ.get("DATABASE_URL"))
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger()
+URL = "postgres://telegram_bot_user:password@localhost:5432/telegram_bot_01"
+
+if MODE == "dev":
+    def run():
+        logger.info("Start in DEV mode")
+        updater.start_polling()
+elif MODE == "prod":
+    def run():
+        logger.info("Start in PROD mode")
+        updater.start_webhook(listen="0.0.0.0", port=int(os.environ.get("PORT", "8443")), url_path=TOKEN,
+webhook_url=f"https://test-bot-tt8t.onrender.com/{TOKEN}")
+else:
+    logger.error("No mode specified!")
+    sys.exit(1)
+
+
 
 
 def start_handler(update, context):
@@ -55,8 +72,6 @@ def check_reminders():
         time.sleep(INTERVAL)
 
 if __name__ == '__main__':
-    PORT = int(os.environ.get("PORT", 80))
-    TOKEN = os.getenv('TOKEN')
     updater = Updater(TOKEN, use_context=True)
     updater.dispatcher.add_handler(CommandHandler("start", start_handler))
     conv_handler = ConversationHandler (
@@ -70,5 +85,5 @@ if __name__ == '__main__':
     updater.dispatcher.add_handler(conv_handler)
     dataSource.create_tables()
     start_check_reminders_task()
-    updater.start_polling()
+    run()
     updater.idle()

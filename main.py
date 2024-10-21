@@ -51,19 +51,12 @@ def enter_message_handler(update:Update, context: CallbackContext):
 def enter_time_handler(update:Update, context: CallbackContext):
     message_text = context.user_data["message_text"]
     try:
-        # Parse the time and ensure it's set to UTC
         time = datetime.datetime.strptime(update.message.text, '%d/%m/%Y %H:%M')
-        time = pytz.timezone('Etc/GMT-3').localize(time).astimezone(pytz.UTC)  # Convert to UTC
-
-        message_data = dataSource.create_reminder(update.message.chat_id, message_text, time)
+        message_data= dataSource.create_reminder(update.message.chat_id, message_text, time)
         update.message.reply_text("Your reminder has been set: " + message_data.__repr__())
     except ValueError:
         update.message.reply_text("Invalid date format. Please use DD/MM/YYYY HH:MM.")
         return ENTER_TIME
-    except Exception as e:
-        update.message.reply_text(f"An error occurred: {e}")
-        return ConversationHandler.END
-
     return ConversationHandler.END
 
 def start_check_reminders_task():

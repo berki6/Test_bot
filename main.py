@@ -2,7 +2,7 @@ from telegram.ext import (Updater, Filters, CallbackContext,CommandHandler, Mess
 from telegram import KeyboardButton, ReplyKeyboardMarkup  , Update
 
 from data_sourse import DataSource
-import os, threading, time, datetime, logging, sys
+import os, threading, time, datetime, logging, sys, pytz
 
 ADD_REMINDER_TEXT = 'Add a reminder⏰'
 INTERVAL = 30
@@ -48,16 +48,28 @@ def enter_message_handler(update:Update, context: CallbackContext):
     update.message.reply_text('Please enter a time for the reminder (format: DD/MM/YYYY HH:MM):')
     return ENTER_TIME
 
-def enter_time_handler(update:Update, context: CallbackContext):
+def enter_time_handler(update: Update, context: CallbackContext):
     message_text = context.user_data["message_text"]
     try:
+        # Parse the time and ensure it's set to GMT+3
         time = datetime.datetime.strptime(update.message.text, '%d/%m/%Y %H:%M')
-        message_data= dataSource.create_reminder(update.message.chat_id, message_text, time)
+        time = pytz.timezone('Etc/GMT-3').localize(time)  # Localize to GMT+3
+
+        # Convert to UTC before storing in the database
+        time_utc = time.astimezone(pytz.UTC)
+
+        # Store the reminder in UTC
+        message_data = dataSource.create_reminder(update.message.chat_id, message_text, time_utc)
         update.message.reply_text("Your reminder has been set: " + message_data.__repr__())
     except ValueError:
         update.message.reply_text("Invalid date format. Please use DD/MM/YYYY HH:MM.")
         return ENTER_TIME
+    except Exception as e:
+        update.message.reply_text(f"An error occurred: {e}")
+        return ConversationHandler.END
+
     return ConversationHandler.END
+
 
 def start_check_reminders_task():
     thread = threading.Thread(target=check_reminders,daemon=True)

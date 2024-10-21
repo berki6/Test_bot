@@ -55,6 +55,7 @@ def check_reminders():
         time.sleep(INTERVAL)
 
 if __name__ == '__main__':
+    PORT = int(os.environ.get("PORT", 80))
     updater = Updater(TOKEN, use_context=True)
     updater.dispatcher.add_handler(CommandHandler("start", start_handler))
     conv_handler = ConversationHandler (

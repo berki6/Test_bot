@@ -1,4 +1,5 @@
 requests
+pytz
 DateTime~=5.5
 python-telegram-bot~=13.15
 psycopg2~=2.9.10

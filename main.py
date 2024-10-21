@@ -69,8 +69,7 @@ if __name__ == '__main__':
     updater.dispatcher.add_handler(conv_handler)
     dataSource.create_tables()
     start_check_reminders_task()
-    updater.start_webhook(listen="0.0.0.0",
-                          port=PORT,
-                          url_path=TOKEN)
-    updater.bot.set_webhook(f"https://test-bot-tt8t.onrender.com/{TOKEN}")
+    webhook_url = f"https://test-bot-tt8t.onrender.com/{TOKEN}"  # Replace with your actual URL
+    updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=TOKEN)
+    updater.bot.set_webhook(webhook_url)
     updater.idle()

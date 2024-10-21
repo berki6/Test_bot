@@ -6,6 +6,7 @@ pip install python-telegram-bot~=13.14
 -> Neon host: Project_name:- Test_bot database_name :- botDB
 -> postgresql://botDB_owner:pXteO0sC1nBW@ep-curly-leaf-a5efkamh.us-east-2.aws.neon.tech/botDB?sslmode=require
 -> postgres password:- 1724Post superuser:- postgres
+-> Webhook: curl -X POST https://api.telegram.org/bot7212398139:AAGXpLZPo6u5b1pR3OyxfFA-lCxiiRrA2dk/setWebhook?url=https://test-bot-tt8t.onrender.com/7212398139:AAGXpLZPo6u5b1pR3OyxfFA-lCxiiRrA2dk
 -> pip install python-telegram-bot --upgrade
 -> database: telegram_bot_01 User: telegram_bot_user
   __SITES__

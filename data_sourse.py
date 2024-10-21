@@ -15,7 +15,7 @@ class DataSource:
         self.database_url = database_url
 
     def get_connection(self):
-        return psycopg2.connect(self.database_url, sslmode= 'require')
+        return psycopg2.connect(self.database_url, sslmode= 'allow')
 
     @staticmethod
     def close_connection(conn):

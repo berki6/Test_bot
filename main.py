@@ -55,7 +55,7 @@ def enter_time_handler(update:Update, context: CallbackContext):
         message_data= dataSource.create_reminder(update.message.chat_id, message_text, time)
         update.message.reply_text("Your reminder has been set: " + message_data.__repr__())
     except ValueError:
-        updates.message.reply_text("Invalid date format. Please use DD/MM/YYYY HH:MM.")
+        update.message.reply_text("Invalid date format. Please use DD/MM/YYYY HH:MM.")
         return ENTER_TIME
     return ConversationHandler.END
 

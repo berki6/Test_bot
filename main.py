@@ -23,24 +23,27 @@ def add_reminder_button():
     return ReplyKeyboardMarkup(keyboard)
 
 def add_reminder_handler(update:Update, context: CallbackContext):
-    update.message.reply_text('Please enter a message of the reminder:')
+    update.message.reply_text('Please enter a message for the reminder:')
     return ENTER_MESSAGE
 
 def enter_message_handler(update:Update, context: CallbackContext):
-    update.message.reply_text('Please enter a time for the bot to remind you:')
     context.user_data["message_text"]= update.message.text
+    update.message.reply_text('Please enter a time for the reminder (format: DD/MM/YYYY HH:MM):')
     return ENTER_TIME
 
 def enter_time_handler(update:Update, context: CallbackContext):
     message_text = context.user_data["message_text"]
-    time = datetime.datetime.strptime(update.message.text, '%d/%m/%Y %H:%M')
-    message_data= dataSource.create_reminder(update.message.chat_id, message_text, time)
-    update.message.reply_text("Your reminder: " + message_data.__repr__())
+    try:
+        time = datetime.datetime.strptime(update.message.text, '%d/%m/%Y %H:%M')
+        message_data= dataSource.create_reminder(update.message.chat_id, message_text, time)
+        update.message.reply_text("Your reminder has been set: " + message_data.__repr__())
+    except ValueError:
+        updates.message.reply_text("Invalid date format. Please use DD/MM/YYYY HH:MM.")
+        return ENTER_TIME
     return ConversationHandler.END
 
 def start_check_reminders_task():
-    thread = threading.Thread(target=check_reminders,args=())
-    thread.daemon = True
+    thread = threading.Thread(target=check_reminders,daemon=True)
     thread.start()
 
 def check_reminders():
@@ -57,12 +60,13 @@ if __name__ == '__main__':
     conv_handler = ConversationHandler (
         entry_points=[MessageHandler(Filters.regex(ADD_REMINDER_TEXT), add_reminder_handler)],
         states={
-            ENTER_MESSAGE: [MessageHandler(Filters.all, enter_message_handler)],
-            ENTER_TIME: [MessageHandler(Filters.all, enter_time_handler)]
+            ENTER_MESSAGE: [MessageHandler(Filters.text & ~Filters.command, enter_message_handler)],
+            ENTER_TIME: [MessageHandler(Filters.text & ~Filters.command, enter_time_handler)]
         },
         fallbacks=[]
     )
     updater.dispatcher.add_handler(conv_handler)
     dataSource.create_tables()
-    updater.start_polling()
     start_check_reminders_task()
+    updater.start_polling()
+    updater.idle()

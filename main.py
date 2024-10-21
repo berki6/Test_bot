@@ -52,21 +52,17 @@ def enter_message_handler(update:Update, context: CallbackContext):
 def enter_time_handler(update: Update, context: CallbackContext):
     message_text = context.user_data["message_text"]
     try:
-        # Parse the time entered by the user as local time (GMT+3)
+        # Parse the time entered by the user
         local_time = datetime.datetime.strptime(update.message.text, '%d/%m/%Y %H:%M')
-
         # Localize the time to GMT+3
         gmt_plus_3 = pytz.timezone('Etc/GMT-3')
         local_time = gmt_plus_3.localize(local_time)  # Localize to GMT+3
-
         # Store the time in UTC for the database
         time_utc = local_time.astimezone(pytz.UTC)
-
         # Store the reminder in UTC
         message_data = dataSource.create_reminder(update.message.chat_id, message_text, time_utc)
-
-        # Format the time for the response in GMT+3
-        time_formatted = local_time.strftime('%d/%m/%Y %I:%M %p')  # Format to 12-hour clock for display
+        # Format the time for the response in GMT+3 with AM/PM
+        time_formatted = local_time.strftime('%d/%m/%Y %I:%M %p')  # Format to 12-hour clock with AM/PM
         update.message.reply_text(
             "Your reminder has been set: Message: {0}; At Time: {1}".format(message_text, time_formatted))
     except ValueError:
@@ -77,7 +73,6 @@ def enter_time_handler(update: Update, context: CallbackContext):
         return ConversationHandler.END
 
     return ConversationHandler.END
-
 
 def start_check_reminders_task():
     thread = threading.Thread(target=check_reminders,daemon=True)

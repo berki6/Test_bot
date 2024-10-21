@@ -1,4 +1,6 @@
 import datetime
+import pytz
+
 
 class ReminderData:
     def __init__(self, row):
@@ -12,4 +14,8 @@ class ReminderData:
         return "Message:  {0}; At Time:  {1}".format(self.message, self.time.strftime('%d/%m/%Y %H:%M'))
 
     def should_be_fired(self):
-        return self.fired is False and datetime.datetime.today() >= self.time
+        # Get the current time, assuming you want to compare everything in UTC
+        now = datetime.datetime.now(pytz.UTC)  # You can use another timezone if necessary
+
+        # Ensure the reminder's time is also timezone-aware (self.time must be in UTC)
+        return self.fired is False and now >= self.time

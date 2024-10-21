@@ -70,6 +70,8 @@ def check_reminders():
                 dataSource.fire_reminder(reminder_data.reminder_id)
                 updater.bot.send_message(reminder_data.chat_id,reminder_data.message)
         time.sleep(INTERVAL)
+def fallback_handler(update, context):
+    update.message.reply_text('I didn\'t understand that. Please try again or use /start.')
 
 if __name__ == '__main__':
     updater = Updater(TOKEN, use_context=True)
@@ -80,8 +82,11 @@ if __name__ == '__main__':
             ENTER_MESSAGE: [MessageHandler(Filters.text & ~Filters.command, enter_message_handler)],
             ENTER_TIME: [MessageHandler(Filters.text & ~Filters.command, enter_time_handler)]
         },
-        fallbacks=[]
+        fallbacks=[MessageHandler(Filters.command, fallback_handler)]
     )
+    # Global fallback handler for any other unhandled commands
+    updater.dispatcher.add_handler(MessageHandler(Filters.command, fallback_handler))
+
     updater.dispatcher.add_handler(conv_handler)
     dataSource.create_tables()
     start_check_reminders_task()

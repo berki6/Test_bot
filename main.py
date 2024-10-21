@@ -52,19 +52,23 @@ def enter_message_handler(update:Update, context: CallbackContext):
 def enter_time_handler(update: Update, context: CallbackContext):
     message_text = context.user_data["message_text"]
     try:
-        # Parse the time entered by the user
-        time = datetime.datetime.strptime(update.message.text, '%d/%m/%Y %H:%M')
+        # Parse the time entered by the user as local time (GMT+3)
+        local_time = datetime.datetime.strptime(update.message.text, '%d/%m/%Y %H:%M')
 
         # Localize the time to GMT+3
         gmt_plus_3 = pytz.timezone('Etc/GMT-3')
-        time = gmt_plus_3.localize(time)
+        local_time = gmt_plus_3.localize(local_time)  # Localize to GMT+3
 
-        # Convert to UTC for storage
-        time_utc = time.astimezone(pytz.UTC)
+        # Store the time in UTC for the database
+        time_utc = local_time.astimezone(pytz.UTC)
 
         # Store the reminder in UTC
         message_data = dataSource.create_reminder(update.message.chat_id, message_text, time_utc)
-        update.message.reply_text("Your reminder has been set: " + message_data.__repr__())
+
+        # Format the time for the response in GMT+3
+        time_formatted = local_time.strftime('%d/%m/%Y %I:%M %p')  # Format to 12-hour clock for display
+        update.message.reply_text(
+            "Your reminder has been set: Message: {0}; At Time: {1}".format(message_text, time_formatted))
     except ValueError:
         update.message.reply_text("Invalid date format. Please use DD/MM/YYYY HH:MM.")
         return ENTER_TIME

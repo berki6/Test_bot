@@ -2,10 +2,10 @@ from telegram.ext import (Updater, Filters, CallbackContext,CommandHandler, Mess
 from telegram import KeyboardButton, ReplyKeyboardMarkup  , Update
 
 from data_sourse import DataSource
-import os, threading, time, datetime, logging, sys, pytz
+import os, threading, time, datetime, logging, sys
 
 ADD_REMINDER_TEXT = 'Add a reminder⏰'
-INTERVAL = 60
+INTERVAL = 30
 
 
 MODE = os.getenv("MODE")
@@ -63,19 +63,12 @@ def start_check_reminders_task():
     thread = threading.Thread(target=check_reminders,daemon=True)
     thread.start()
 
-
 def check_reminders():
     while True:
-        now_utc = datetime.datetime.now(pytz.UTC)
-        print(f"Checking reminders at: {now_utc} UTC")
-
         for reminder_data in dataSource.get_all_reminders():
-            print(f"Reminder data: {reminder_data}")
             if reminder_data.should_be_fired():
-                print(f"Firing reminder: {reminder_data}")
                 dataSource.fire_reminder(reminder_data.reminder_id)
-                updater.bot.send_message(reminder_data.chat_id, reminder_data.message)
-
+                updater.bot.send_message(reminder_data.chat_id,reminder_data.message)
         time.sleep(INTERVAL)
 def fallback_handler(update, context):
     update.message.reply_text('I didn\'t understand that. Please try again or use /start.')

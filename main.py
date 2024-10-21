@@ -48,14 +48,18 @@ def enter_message_handler(update:Update, context: CallbackContext):
     update.message.reply_text('Please enter a time for the reminder (format: DD/MM/YYYY HH:MM):')
     return ENTER_TIME
 
+
 def enter_time_handler(update: Update, context: CallbackContext):
     message_text = context.user_data["message_text"]
     try:
-        # Parse the time and ensure it's set to GMT+3
+        # Parse the time entered by the user
         time = datetime.datetime.strptime(update.message.text, '%d/%m/%Y %H:%M')
-        time = pytz.timezone('Etc/GMT-3').localize(time)  # Localize to GMT+3
 
-        # Convert to UTC before storing in the database
+        # Localize the time to GMT+3
+        gmt_plus_3 = pytz.timezone('Etc/GMT-3')
+        time = gmt_plus_3.localize(time)
+
+        # Convert to UTC for storage
         time_utc = time.astimezone(pytz.UTC)
 
         # Store the reminder in UTC

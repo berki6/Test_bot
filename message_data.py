@@ -15,17 +15,19 @@ class ReminderData:
 
     def should_be_fired(self):
             gmt_plus_3 = pytz.timezone('Etc/GMT-3')
-            now = datetime.datetime.now(gmt_plus_3)
+            now_utc = datetime.datetime.now(pytz.UTC)
 
-            utc = pytz.UTC
             if self.time.tzinfo is None:
-                self.time = utc.localize(self.time)
+                self.time = pytz.UTC.localize(self.time)
+
+            print(f"Current UTC time: {now_utc}")
+            print(f"Reminder time (UTC): {self.time}")
 
             reminder_time_gmt_plus_3 = self.time.astimezone(gmt_plus_3)
 
-            print(f"Now (GMT+3): {now}")
             print(f"Reminder time (GMT+3): {reminder_time_gmt_plus_3}")
+            print(f"Now (GMT+3): {now_utc.astimezone(gmt_plus_3)}")
 
-            return self.fired is False and now >= reminder_time_gmt_plus_3
+            return self.fired is False and now_utc >= self.time
 
 
